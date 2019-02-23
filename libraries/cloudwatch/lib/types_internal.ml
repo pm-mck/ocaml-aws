@@ -7,7 +7,7 @@ module Dimension =
     type t = {
       name: String.t ;
       value: String.t }
-    let make ~name  ~value  () = { name; value } 
+    let make ~name  ~value  () = { name; value }
     let parse xml =
       Some
         {
@@ -18,24 +18,21 @@ module Dimension =
             (Xml.required "Value"
                (Util.option_bind (Xml.member "Value" xml) String.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Some (Query.Pair ("Value", (String.to_query v.value)));
            Some (Query.Pair ("Name", (String.to_query v.name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("value", (String.to_json v.value));
            Some ("name", (String.to_json v.name))])
-      
     let of_json j =
       {
         name = (String.of_json (Util.of_option_exn (Json.lookup j "name")));
         value = (String.of_json (Util.of_option_exn (Json.lookup j "value")))
-      } 
+      }
   end
 module HistoryItemType =
   struct
@@ -46,22 +43,23 @@ module HistoryItemType =
     let str_to_t =
       [("Action", Action);
       ("StateUpdate", StateUpdate);
-      ("ConfigurationUpdate", ConfigurationUpdate)] 
+      ("ConfigurationUpdate", ConfigurationUpdate)]
     let t_to_str =
       [(Action, "Action");
       (StateUpdate, "StateUpdate");
-      (ConfigurationUpdate, "ConfigurationUpdate")] 
-    let make v () = v 
+      (ConfigurationUpdate, "ConfigurationUpdate")]
+    let to_string e = Util.of_option_exn (Util.list_find t_to_str e)
+    let of_string s = Util.of_option_exn (Util.list_find str_to_t s)
+    let make v () = v
     let parse xml =
       Util.option_bind (String.parse xml)
-        (fun s  -> Util.list_find str_to_t s)
-      
+        (fun s -> Util.list_find str_to_t s)
     let to_query v =
-      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v))) 
+      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v)))
     let to_json v =
-      String.to_json (Util.of_option_exn (Util.list_find t_to_str v)) 
+      String.to_json (Util.of_option_exn (Util.list_find t_to_str v))
     let of_json j =
-      Util.of_option_exn (Util.list_find str_to_t (String.of_json j)) 
+      Util.of_option_exn (Util.list_find str_to_t (String.of_json j))
   end
 module ComparisonOperator =
   struct
@@ -74,43 +72,44 @@ module ComparisonOperator =
       [("LessThanOrEqualToThreshold", LessThanOrEqualToThreshold);
       ("LessThanThreshold", LessThanThreshold);
       ("GreaterThanThreshold", GreaterThanThreshold);
-      ("GreaterThanOrEqualToThreshold", GreaterThanOrEqualToThreshold)] 
+      ("GreaterThanOrEqualToThreshold", GreaterThanOrEqualToThreshold)]
     let t_to_str =
       [(LessThanOrEqualToThreshold, "LessThanOrEqualToThreshold");
       (LessThanThreshold, "LessThanThreshold");
       (GreaterThanThreshold, "GreaterThanThreshold");
-      (GreaterThanOrEqualToThreshold, "GreaterThanOrEqualToThreshold")] 
-    let make v () = v 
+      (GreaterThanOrEqualToThreshold, "GreaterThanOrEqualToThreshold")]
+    let to_string e = Util.of_option_exn (Util.list_find t_to_str e)
+    let of_string s = Util.of_option_exn (Util.list_find str_to_t s)
+    let make v () = v
     let parse xml =
       Util.option_bind (String.parse xml)
-        (fun s  -> Util.list_find str_to_t s)
-      
+        (fun s -> Util.list_find str_to_t s)
     let to_query v =
-      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v))) 
+      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v)))
     let to_json v =
-      String.to_json (Util.of_option_exn (Util.list_find t_to_str v)) 
+      String.to_json (Util.of_option_exn (Util.list_find t_to_str v))
     let of_json j =
-      Util.of_option_exn (Util.list_find str_to_t (String.of_json j)) 
+      Util.of_option_exn (Util.list_find str_to_t (String.of_json j))
   end
 module Dimensions =
   struct
     type t = Dimension.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map Dimension.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list Dimension.to_query v 
-    let to_json v = `List (List.map Dimension.to_json v) 
-    let of_json j = Json.to_list Dimension.of_json j 
+      Util.option_all (List.map Dimension.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list Dimension.to_query v
+    let to_json v = `List (List.map Dimension.to_json v)
+    let of_json j = Json.to_list Dimension.of_json j
   end
 module ResourceList =
   struct
     type t = String.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map String.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list String.to_query v 
-    let to_json v = `List (List.map String.to_json v) 
-    let of_json j = Json.to_list String.of_json j 
+      Util.option_all (List.map String.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list String.to_query v
+    let to_json v = `List (List.map String.to_json v)
+    let of_json j = Json.to_list String.of_json j
   end
 module StandardUnit =
   struct
@@ -169,7 +168,7 @@ module StandardUnit =
       ("Bytes", Bytes);
       ("Milliseconds", Milliseconds);
       ("Microseconds", Microseconds);
-      ("Seconds", Seconds)] 
+      ("Seconds", Seconds)]
     let t_to_str =
       [(None, "None");
       (Count_Second, "Count/Second");
@@ -197,18 +196,19 @@ module StandardUnit =
       (Bytes, "Bytes");
       (Milliseconds, "Milliseconds");
       (Microseconds, "Microseconds");
-      (Seconds, "Seconds")] 
-    let make v () = v 
+      (Seconds, "Seconds")]
+    let to_string e = Util.of_option_exn (Util.list_find t_to_str e)
+    let of_string s = Util.of_option_exn (Util.list_find str_to_t s)
+    let make v () = v
     let parse xml =
       Util.option_bind (String.parse xml)
-        (fun s  -> Util.list_find str_to_t s)
-      
+        (fun s -> Util.list_find str_to_t s)
     let to_query v =
-      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v))) 
+      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v)))
     let to_json v =
-      String.to_json (Util.of_option_exn (Util.list_find t_to_str v)) 
+      String.to_json (Util.of_option_exn (Util.list_find t_to_str v))
     let of_json j =
-      Util.of_option_exn (Util.list_find str_to_t (String.of_json j)) 
+      Util.of_option_exn (Util.list_find str_to_t (String.of_json j))
   end
 module StateValue =
   struct
@@ -219,22 +219,23 @@ module StateValue =
     let str_to_t =
       [("INSUFFICIENT_DATA", INSUFFICIENT_DATA);
       ("ALARM", ALARM);
-      ("OK", OK)] 
+      ("OK", OK)]
     let t_to_str =
       [(INSUFFICIENT_DATA, "INSUFFICIENT_DATA");
       (ALARM, "ALARM");
-      (OK, "OK")] 
-    let make v () = v 
+      (OK, "OK")]
+    let to_string e = Util.of_option_exn (Util.list_find t_to_str e)
+    let of_string s = Util.of_option_exn (Util.list_find str_to_t s)
+    let make v () = v
     let parse xml =
       Util.option_bind (String.parse xml)
-        (fun s  -> Util.list_find str_to_t s)
-      
+        (fun s -> Util.list_find str_to_t s)
     let to_query v =
-      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v))) 
+      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v)))
     let to_json v =
-      String.to_json (Util.of_option_exn (Util.list_find t_to_str v)) 
+      String.to_json (Util.of_option_exn (Util.list_find t_to_str v))
     let of_json j =
-      Util.of_option_exn (Util.list_find str_to_t (String.of_json j)) 
+      Util.of_option_exn (Util.list_find str_to_t (String.of_json j))
   end
 module Statistic =
   struct
@@ -249,24 +250,25 @@ module Statistic =
       ("Minimum", Minimum);
       ("Sum", Sum);
       ("Average", Average);
-      ("SampleCount", SampleCount)] 
+      ("SampleCount", SampleCount)]
     let t_to_str =
       [(Maximum, "Maximum");
       (Minimum, "Minimum");
       (Sum, "Sum");
       (Average, "Average");
-      (SampleCount, "SampleCount")] 
-    let make v () = v 
+      (SampleCount, "SampleCount")]
+    let to_string e = Util.of_option_exn (Util.list_find t_to_str e)
+    let of_string s = Util.of_option_exn (Util.list_find str_to_t s)
+    let make v () = v
     let parse xml =
       Util.option_bind (String.parse xml)
-        (fun s  -> Util.list_find str_to_t s)
-      
+        (fun s -> Util.list_find str_to_t s)
     let to_query v =
-      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v))) 
+      Query.Value (Some (Util.of_option_exn (Util.list_find t_to_str v)))
     let to_json v =
-      String.to_json (Util.of_option_exn (Util.list_find t_to_str v)) 
+      String.to_json (Util.of_option_exn (Util.list_find t_to_str v))
     let of_json j =
-      Util.of_option_exn (Util.list_find str_to_t (String.of_json j)) 
+      Util.of_option_exn (Util.list_find str_to_t (String.of_json j))
   end
 module StatisticSet =
   struct
@@ -277,7 +279,7 @@ module StatisticSet =
       minimum: Double.t ;
       maximum: Double.t }
     let make ~sample_count  ~sum  ~minimum  ~maximum  () =
-      { sample_count; sum; minimum; maximum } 
+      { sample_count; sum; minimum; maximum }
     let parse xml =
       Some
         {
@@ -294,7 +296,6 @@ module StatisticSet =
             (Xml.required "Maximum"
                (Util.option_bind (Xml.member "Maximum" xml) Double.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -303,7 +304,6 @@ module StatisticSet =
            Some (Query.Pair ("Sum", (Double.to_query v.sum)));
            Some
              (Query.Pair ("SampleCount", (Double.to_query v.sample_count)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
@@ -311,7 +311,6 @@ module StatisticSet =
            Some ("minimum", (Double.to_json v.minimum));
            Some ("sum", (Double.to_json v.sum));
            Some ("sample_count", (Double.to_json v.sample_count))])
-      
     let of_json j =
       {
         sample_count =
@@ -321,7 +320,7 @@ module StatisticSet =
           (Double.of_json (Util.of_option_exn (Json.lookup j "minimum")));
         maximum =
           (Double.of_json (Util.of_option_exn (Json.lookup j "maximum")))
-      } 
+      }
   end
 module AlarmHistoryItem =
   struct
@@ -340,7 +339,7 @@ module AlarmHistoryItem =
         history_item_type;
         history_summary;
         history_data
-      } 
+      }
     let parse xml =
       Some
         {
@@ -356,36 +355,33 @@ module AlarmHistoryItem =
           history_data =
             (Util.option_bind (Xml.member "HistoryData" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.history_data
-              (fun f  -> Query.Pair ("HistoryData", (String.to_query f)));
+              (fun f -> Query.Pair ("HistoryData", (String.to_query f)));
            Util.option_map v.history_summary
-             (fun f  -> Query.Pair ("HistorySummary", (String.to_query f)));
+             (fun f -> Query.Pair ("HistorySummary", (String.to_query f)));
            Util.option_map v.history_item_type
-             (fun f  ->
+             (fun f ->
                 Query.Pair ("HistoryItemType", (HistoryItemType.to_query f)));
            Util.option_map v.timestamp
-             (fun f  -> Query.Pair ("Timestamp", (DateTime.to_query f)));
+             (fun f -> Query.Pair ("Timestamp", (DateTime.to_query f)));
            Util.option_map v.alarm_name
-             (fun f  -> Query.Pair ("AlarmName", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("AlarmName", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.history_data
-              (fun f  -> ("history_data", (String.to_json f)));
+              (fun f -> ("history_data", (String.to_json f)));
            Util.option_map v.history_summary
-             (fun f  -> ("history_summary", (String.to_json f)));
+             (fun f -> ("history_summary", (String.to_json f)));
            Util.option_map v.history_item_type
-             (fun f  -> ("history_item_type", (HistoryItemType.to_json f)));
+             (fun f -> ("history_item_type", (HistoryItemType.to_json f)));
            Util.option_map v.timestamp
-             (fun f  -> ("timestamp", (DateTime.to_json f)));
+             (fun f -> ("timestamp", (DateTime.to_json f)));
            Util.option_map v.alarm_name
-             (fun f  -> ("alarm_name", (String.to_json f)))])
-      
+             (fun f -> ("alarm_name", (String.to_json f)))])
     let of_json j =
       {
         alarm_name =
@@ -399,14 +395,14 @@ module AlarmHistoryItem =
           (Util.option_map (Json.lookup j "history_summary") String.of_json);
         history_data =
           (Util.option_map (Json.lookup j "history_data") String.of_json)
-      } 
+      }
   end
 module DimensionFilter =
   struct
     type t = {
       name: String.t ;
       value: String.t option }
-    let make ~name  ?value  () = { name; value } 
+    let make ~name  ?value  () = { name; value }
     let parse xml =
       Some
         {
@@ -415,25 +411,22 @@ module DimensionFilter =
                (Util.option_bind (Xml.member "Name" xml) String.parse));
           value = (Util.option_bind (Xml.member "Value" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.value
-              (fun f  -> Query.Pair ("Value", (String.to_query f)));
+              (fun f -> Query.Pair ("Value", (String.to_query f)));
            Some (Query.Pair ("Name", (String.to_query v.name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
-           [Util.option_map v.value (fun f  -> ("value", (String.to_json f)));
+           [Util.option_map v.value (fun f -> ("value", (String.to_json f)));
            Some ("name", (String.to_json v.name))])
-      
     let of_json j =
       {
         name = (String.of_json (Util.of_option_exn (Json.lookup j "name")));
         value = (Util.option_map (Json.lookup j "value") String.of_json)
-      } 
+      }
   end
 module MetricAlarm =
   struct
@@ -489,7 +482,7 @@ module MetricAlarm =
         evaluation_periods;
         threshold;
         comparison_operator
-      } 
+      }
     let parse xml =
       Some
         {
@@ -549,41 +542,39 @@ module MetricAlarm =
             (Util.option_bind (Xml.member "ComparisonOperator" xml)
                ComparisonOperator.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.comparison_operator
-              (fun f  ->
+              (fun f ->
                  Query.Pair
                    ("ComparisonOperator", (ComparisonOperator.to_query f)));
            Util.option_map v.threshold
-             (fun f  -> Query.Pair ("Threshold", (Double.to_query f)));
+             (fun f -> Query.Pair ("Threshold", (Double.to_query f)));
            Util.option_map v.evaluation_periods
-             (fun f  ->
-                Query.Pair ("EvaluationPeriods", (Integer.to_query f)));
+             (fun f -> Query.Pair ("EvaluationPeriods", (Integer.to_query f)));
            Util.option_map v.unit
-             (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+             (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Util.option_map v.period
-             (fun f  -> Query.Pair ("Period", (Integer.to_query f)));
+             (fun f -> Query.Pair ("Period", (Integer.to_query f)));
            Some
              (Query.Pair
                 ("Dimensions.member", (Dimensions.to_query v.dimensions)));
            Util.option_map v.statistic
-             (fun f  -> Query.Pair ("Statistic", (Statistic.to_query f)));
+             (fun f -> Query.Pair ("Statistic", (Statistic.to_query f)));
            Util.option_map v.namespace
-             (fun f  -> Query.Pair ("Namespace", (String.to_query f)));
+             (fun f -> Query.Pair ("Namespace", (String.to_query f)));
            Util.option_map v.metric_name
-             (fun f  -> Query.Pair ("MetricName", (String.to_query f)));
+             (fun f -> Query.Pair ("MetricName", (String.to_query f)));
            Util.option_map v.state_updated_timestamp
-             (fun f  ->
+             (fun f ->
                 Query.Pair ("StateUpdatedTimestamp", (DateTime.to_query f)));
            Util.option_map v.state_reason_data
-             (fun f  -> Query.Pair ("StateReasonData", (String.to_query f)));
+             (fun f -> Query.Pair ("StateReasonData", (String.to_query f)));
            Util.option_map v.state_reason
-             (fun f  -> Query.Pair ("StateReason", (String.to_query f)));
+             (fun f -> Query.Pair ("StateReason", (String.to_query f)));
            Util.option_map v.state_value
-             (fun f  -> Query.Pair ("StateValue", (StateValue.to_query f)));
+             (fun f -> Query.Pair ("StateValue", (StateValue.to_query f)));
            Some
              (Query.Pair
                 ("InsufficientDataActions.member",
@@ -596,66 +587,64 @@ module MetricAlarm =
              (Query.Pair
                 ("OKActions.member", (ResourceList.to_query v.o_k_actions)));
            Util.option_map v.actions_enabled
-             (fun f  -> Query.Pair ("ActionsEnabled", (Boolean.to_query f)));
+             (fun f -> Query.Pair ("ActionsEnabled", (Boolean.to_query f)));
            Util.option_map v.alarm_configuration_updated_timestamp
-             (fun f  ->
+             (fun f ->
                 Query.Pair
                   ("AlarmConfigurationUpdatedTimestamp",
                     (DateTime.to_query f)));
            Util.option_map v.alarm_description
-             (fun f  -> Query.Pair ("AlarmDescription", (String.to_query f)));
+             (fun f -> Query.Pair ("AlarmDescription", (String.to_query f)));
            Util.option_map v.alarm_arn
-             (fun f  -> Query.Pair ("AlarmArn", (String.to_query f)));
+             (fun f -> Query.Pair ("AlarmArn", (String.to_query f)));
            Util.option_map v.alarm_name
-             (fun f  -> Query.Pair ("AlarmName", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("AlarmName", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.comparison_operator
-              (fun f  ->
+              (fun f ->
                  ("comparison_operator", (ComparisonOperator.to_json f)));
            Util.option_map v.threshold
-             (fun f  -> ("threshold", (Double.to_json f)));
+             (fun f -> ("threshold", (Double.to_json f)));
            Util.option_map v.evaluation_periods
-             (fun f  -> ("evaluation_periods", (Integer.to_json f)));
+             (fun f -> ("evaluation_periods", (Integer.to_json f)));
            Util.option_map v.unit
-             (fun f  -> ("unit", (StandardUnit.to_json f)));
+             (fun f -> ("unit", (StandardUnit.to_json f)));
            Util.option_map v.period
-             (fun f  -> ("period", (Integer.to_json f)));
+             (fun f -> ("period", (Integer.to_json f)));
            Some ("dimensions", (Dimensions.to_json v.dimensions));
            Util.option_map v.statistic
-             (fun f  -> ("statistic", (Statistic.to_json f)));
+             (fun f -> ("statistic", (Statistic.to_json f)));
            Util.option_map v.namespace
-             (fun f  -> ("namespace", (String.to_json f)));
+             (fun f -> ("namespace", (String.to_json f)));
            Util.option_map v.metric_name
-             (fun f  -> ("metric_name", (String.to_json f)));
+             (fun f -> ("metric_name", (String.to_json f)));
            Util.option_map v.state_updated_timestamp
-             (fun f  -> ("state_updated_timestamp", (DateTime.to_json f)));
+             (fun f -> ("state_updated_timestamp", (DateTime.to_json f)));
            Util.option_map v.state_reason_data
-             (fun f  -> ("state_reason_data", (String.to_json f)));
+             (fun f -> ("state_reason_data", (String.to_json f)));
            Util.option_map v.state_reason
-             (fun f  -> ("state_reason", (String.to_json f)));
+             (fun f -> ("state_reason", (String.to_json f)));
            Util.option_map v.state_value
-             (fun f  -> ("state_value", (StateValue.to_json f)));
+             (fun f -> ("state_value", (StateValue.to_json f)));
            Some
              ("insufficient_data_actions",
                (ResourceList.to_json v.insufficient_data_actions));
            Some ("alarm_actions", (ResourceList.to_json v.alarm_actions));
            Some ("o_k_actions", (ResourceList.to_json v.o_k_actions));
            Util.option_map v.actions_enabled
-             (fun f  -> ("actions_enabled", (Boolean.to_json f)));
+             (fun f -> ("actions_enabled", (Boolean.to_json f)));
            Util.option_map v.alarm_configuration_updated_timestamp
-             (fun f  ->
+             (fun f ->
                 ("alarm_configuration_updated_timestamp",
                   (DateTime.to_json f)));
            Util.option_map v.alarm_description
-             (fun f  -> ("alarm_description", (String.to_json f)));
+             (fun f -> ("alarm_description", (String.to_json f)));
            Util.option_map v.alarm_arn
-             (fun f  -> ("alarm_arn", (String.to_json f)));
+             (fun f -> ("alarm_arn", (String.to_json f)));
            Util.option_map v.alarm_name
-             (fun f  -> ("alarm_name", (String.to_json f)))])
-      
+             (fun f -> ("alarm_name", (String.to_json f)))])
     let of_json j =
       {
         alarm_name =
@@ -707,7 +696,7 @@ module MetricAlarm =
         comparison_operator =
           (Util.option_map (Json.lookup j "comparison_operator")
              ComparisonOperator.of_json)
-      } 
+      }
   end
 module Metric =
   struct
@@ -717,7 +706,7 @@ module Metric =
       metric_name: String.t option ;
       dimensions: Dimensions.t }
     let make ?namespace  ?metric_name  ?(dimensions= [])  () =
-      { namespace; metric_name; dimensions } 
+      { namespace; metric_name; dimensions }
     let parse xml =
       Some
         {
@@ -730,7 +719,6 @@ module Metric =
                (Util.option_bind (Xml.member "Dimensions" xml)
                   Dimensions.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -738,19 +726,17 @@ module Metric =
               (Query.Pair
                  ("Dimensions.member", (Dimensions.to_query v.dimensions)));
            Util.option_map v.metric_name
-             (fun f  -> Query.Pair ("MetricName", (String.to_query f)));
+             (fun f -> Query.Pair ("MetricName", (String.to_query f)));
            Util.option_map v.namespace
-             (fun f  -> Query.Pair ("Namespace", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("Namespace", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("dimensions", (Dimensions.to_json v.dimensions));
            Util.option_map v.metric_name
-             (fun f  -> ("metric_name", (String.to_json f)));
+             (fun f -> ("metric_name", (String.to_json f)));
            Util.option_map v.namespace
-             (fun f  -> ("namespace", (String.to_json f)))])
-      
+             (fun f -> ("namespace", (String.to_json f)))])
     let of_json j =
       {
         namespace =
@@ -760,7 +746,7 @@ module Metric =
         dimensions =
           (Dimensions.of_json
              (Util.of_option_exn (Json.lookup j "dimensions")))
-      } 
+      }
   end
 module MetricDatum =
   struct
@@ -774,7 +760,7 @@ module MetricDatum =
       unit: StandardUnit.t option }
     let make ~metric_name  ?(dimensions= [])  ?timestamp  ?value 
       ?statistic_values  ?unit  () =
-      { metric_name; dimensions; timestamp; value; statistic_values; unit } 
+      { metric_name; dimensions; timestamp; value; statistic_values; unit }
     let parse xml =
       Some
         {
@@ -794,37 +780,34 @@ module MetricDatum =
           unit =
             (Util.option_bind (Xml.member "Unit" xml) StandardUnit.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+              (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Util.option_map v.statistic_values
-             (fun f  ->
+             (fun f ->
                 Query.Pair ("StatisticValues", (StatisticSet.to_query f)));
            Util.option_map v.value
-             (fun f  -> Query.Pair ("Value", (Double.to_query f)));
+             (fun f -> Query.Pair ("Value", (Double.to_query f)));
            Util.option_map v.timestamp
-             (fun f  -> Query.Pair ("Timestamp", (DateTime.to_query f)));
+             (fun f -> Query.Pair ("Timestamp", (DateTime.to_query f)));
            Some
              (Query.Pair
                 ("Dimensions.member", (Dimensions.to_query v.dimensions)));
            Some (Query.Pair ("MetricName", (String.to_query v.metric_name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> ("unit", (StandardUnit.to_json f)));
+              (fun f -> ("unit", (StandardUnit.to_json f)));
            Util.option_map v.statistic_values
-             (fun f  -> ("statistic_values", (StatisticSet.to_json f)));
-           Util.option_map v.value (fun f  -> ("value", (Double.to_json f)));
+             (fun f -> ("statistic_values", (StatisticSet.to_json f)));
+           Util.option_map v.value (fun f -> ("value", (Double.to_json f)));
            Util.option_map v.timestamp
-             (fun f  -> ("timestamp", (DateTime.to_json f)));
+             (fun f -> ("timestamp", (DateTime.to_json f)));
            Some ("dimensions", (Dimensions.to_json v.dimensions));
            Some ("metric_name", (String.to_json v.metric_name))])
-      
     let of_json j =
       {
         metric_name =
@@ -839,7 +822,7 @@ module MetricDatum =
           (Util.option_map (Json.lookup j "statistic_values")
              StatisticSet.of_json);
         unit = (Util.option_map (Json.lookup j "unit") StandardUnit.of_json)
-      } 
+      }
   end
 module Datapoint =
   struct
@@ -854,7 +837,7 @@ module Datapoint =
       unit: StandardUnit.t option }
     let make ?timestamp  ?sample_count  ?average  ?sum  ?minimum  ?maximum 
       ?unit  () =
-      { timestamp; sample_count; average; sum; minimum; maximum; unit } 
+      { timestamp; sample_count; average; sum; minimum; maximum; unit }
     let parse xml =
       Some
         {
@@ -872,42 +855,39 @@ module Datapoint =
           unit =
             (Util.option_bind (Xml.member "Unit" xml) StandardUnit.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+              (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Util.option_map v.maximum
-             (fun f  -> Query.Pair ("Maximum", (Double.to_query f)));
+             (fun f -> Query.Pair ("Maximum", (Double.to_query f)));
            Util.option_map v.minimum
-             (fun f  -> Query.Pair ("Minimum", (Double.to_query f)));
+             (fun f -> Query.Pair ("Minimum", (Double.to_query f)));
            Util.option_map v.sum
-             (fun f  -> Query.Pair ("Sum", (Double.to_query f)));
+             (fun f -> Query.Pair ("Sum", (Double.to_query f)));
            Util.option_map v.average
-             (fun f  -> Query.Pair ("Average", (Double.to_query f)));
+             (fun f -> Query.Pair ("Average", (Double.to_query f)));
            Util.option_map v.sample_count
-             (fun f  -> Query.Pair ("SampleCount", (Double.to_query f)));
+             (fun f -> Query.Pair ("SampleCount", (Double.to_query f)));
            Util.option_map v.timestamp
-             (fun f  -> Query.Pair ("Timestamp", (DateTime.to_query f)))])
-      
+             (fun f -> Query.Pair ("Timestamp", (DateTime.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> ("unit", (StandardUnit.to_json f)));
+              (fun f -> ("unit", (StandardUnit.to_json f)));
            Util.option_map v.maximum
-             (fun f  -> ("maximum", (Double.to_json f)));
+             (fun f -> ("maximum", (Double.to_json f)));
            Util.option_map v.minimum
-             (fun f  -> ("minimum", (Double.to_json f)));
-           Util.option_map v.sum (fun f  -> ("sum", (Double.to_json f)));
+             (fun f -> ("minimum", (Double.to_json f)));
+           Util.option_map v.sum (fun f -> ("sum", (Double.to_json f)));
            Util.option_map v.average
-             (fun f  -> ("average", (Double.to_json f)));
+             (fun f -> ("average", (Double.to_json f)));
            Util.option_map v.sample_count
-             (fun f  -> ("sample_count", (Double.to_json f)));
+             (fun f -> ("sample_count", (Double.to_json f)));
            Util.option_map v.timestamp
-             (fun f  -> ("timestamp", (DateTime.to_json f)))])
-      
+             (fun f -> ("timestamp", (DateTime.to_json f)))])
     let of_json j =
       {
         timestamp =
@@ -919,91 +899,89 @@ module Datapoint =
         minimum = (Util.option_map (Json.lookup j "minimum") Double.of_json);
         maximum = (Util.option_map (Json.lookup j "maximum") Double.of_json);
         unit = (Util.option_map (Json.lookup j "unit") StandardUnit.of_json)
-      } 
+      }
   end
 module AlarmHistoryItems =
   struct
     type t = AlarmHistoryItem.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
       Util.option_all
         (List.map AlarmHistoryItem.parse (Xml.members "member" xml))
-      
-    let to_query v = Query.to_query_list AlarmHistoryItem.to_query v 
-    let to_json v = `List (List.map AlarmHistoryItem.to_json v) 
-    let of_json j = Json.to_list AlarmHistoryItem.of_json j 
+    let to_query v = Query.to_query_list AlarmHistoryItem.to_query v
+    let to_json v = `List (List.map AlarmHistoryItem.to_json v)
+    let of_json j = Json.to_list AlarmHistoryItem.of_json j
   end
 module DimensionFilters =
   struct
     type t = DimensionFilter.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
       Util.option_all
         (List.map DimensionFilter.parse (Xml.members "member" xml))
-      
-    let to_query v = Query.to_query_list DimensionFilter.to_query v 
-    let to_json v = `List (List.map DimensionFilter.to_json v) 
-    let of_json j = Json.to_list DimensionFilter.of_json j 
+    let to_query v = Query.to_query_list DimensionFilter.to_query v
+    let to_json v = `List (List.map DimensionFilter.to_json v)
+    let of_json j = Json.to_list DimensionFilter.of_json j
   end
 module AlarmNames =
   struct
     type t = String.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map String.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list String.to_query v 
-    let to_json v = `List (List.map String.to_json v) 
-    let of_json j = Json.to_list String.of_json j 
+      Util.option_all (List.map String.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list String.to_query v
+    let to_json v = `List (List.map String.to_json v)
+    let of_json j = Json.to_list String.of_json j
   end
 module MetricAlarms =
   struct
     type t = MetricAlarm.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map MetricAlarm.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list MetricAlarm.to_query v 
-    let to_json v = `List (List.map MetricAlarm.to_json v) 
-    let of_json j = Json.to_list MetricAlarm.of_json j 
+      Util.option_all (List.map MetricAlarm.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list MetricAlarm.to_query v
+    let to_json v = `List (List.map MetricAlarm.to_json v)
+    let of_json j = Json.to_list MetricAlarm.of_json j
   end
 module Metrics =
   struct
     type t = Metric.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map Metric.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list Metric.to_query v 
-    let to_json v = `List (List.map Metric.to_json v) 
-    let of_json j = Json.to_list Metric.of_json j 
+      Util.option_all (List.map Metric.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list Metric.to_query v
+    let to_json v = `List (List.map Metric.to_json v)
+    let of_json j = Json.to_list Metric.of_json j
   end
 module Statistics =
   struct
     type t = Statistic.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map Statistic.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list Statistic.to_query v 
-    let to_json v = `List (List.map Statistic.to_json v) 
-    let of_json j = Json.to_list Statistic.of_json j 
+      Util.option_all (List.map Statistic.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list Statistic.to_query v
+    let to_json v = `List (List.map Statistic.to_json v)
+    let of_json j = Json.to_list Statistic.of_json j
   end
 module MetricData =
   struct
     type t = MetricDatum.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map MetricDatum.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list MetricDatum.to_query v 
-    let to_json v = `List (List.map MetricDatum.to_json v) 
-    let of_json j = Json.to_list MetricDatum.of_json j 
+      Util.option_all (List.map MetricDatum.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list MetricDatum.to_query v
+    let to_json v = `List (List.map MetricDatum.to_json v)
+    let of_json j = Json.to_list MetricDatum.of_json j
   end
 module Datapoints =
   struct
     type t = Datapoint.t list
-    let make elems () = elems 
+    let make elems () = elems
     let parse xml =
-      Util.option_all (List.map Datapoint.parse (Xml.members "member" xml)) 
-    let to_query v = Query.to_query_list Datapoint.to_query v 
-    let to_json v = `List (List.map Datapoint.to_json v) 
-    let of_json j = Json.to_list Datapoint.of_json j 
+      Util.option_all (List.map Datapoint.parse (Xml.members "member" xml))
+    let to_query v = Query.to_query_list Datapoint.to_query v
+    let to_json v = `List (List.map Datapoint.to_json v)
+    let of_json j = Json.to_list Datapoint.of_json j
   end
 module DescribeAlarmHistoryOutput =
   struct
@@ -1012,7 +990,7 @@ module DescribeAlarmHistoryOutput =
       alarm_history_items: AlarmHistoryItems.t ;
       next_token: String.t option }
     let make ?(alarm_history_items= [])  ?next_token  () =
-      { alarm_history_items; next_token } 
+      { alarm_history_items; next_token }
     let parse xml =
       Some
         {
@@ -1023,26 +1001,23 @@ module DescribeAlarmHistoryOutput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Some
              (Query.Pair
                 ("AlarmHistoryItems.member",
                   (AlarmHistoryItems.to_query v.alarm_history_items)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Some
              ("alarm_history_items",
                (AlarmHistoryItems.to_json v.alarm_history_items))])
-      
     let of_json j =
       {
         alarm_history_items =
@@ -1050,7 +1025,7 @@ module DescribeAlarmHistoryOutput =
              (Util.of_option_exn (Json.lookup j "alarm_history_items")));
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module ListMetricsInput =
   struct
@@ -1061,7 +1036,7 @@ module ListMetricsInput =
       dimensions: DimensionFilters.t ;
       next_token: String.t option }
     let make ?namespace  ?metric_name  ?(dimensions= [])  ?next_token  () =
-      { namespace; metric_name; dimensions; next_token } 
+      { namespace; metric_name; dimensions; next_token }
     let parse xml =
       Some
         {
@@ -1076,32 +1051,29 @@ module ListMetricsInput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Some
              (Query.Pair
                 ("Dimensions.member",
                   (DimensionFilters.to_query v.dimensions)));
            Util.option_map v.metric_name
-             (fun f  -> Query.Pair ("MetricName", (String.to_query f)));
+             (fun f -> Query.Pair ("MetricName", (String.to_query f)));
            Util.option_map v.namespace
-             (fun f  -> Query.Pair ("Namespace", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("Namespace", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Some ("dimensions", (DimensionFilters.to_json v.dimensions));
            Util.option_map v.metric_name
-             (fun f  -> ("metric_name", (String.to_json f)));
+             (fun f -> ("metric_name", (String.to_json f)));
            Util.option_map v.namespace
-             (fun f  -> ("namespace", (String.to_json f)))])
-      
+             (fun f -> ("namespace", (String.to_json f)))])
     let of_json j =
       {
         namespace =
@@ -1113,35 +1085,32 @@ module ListMetricsInput =
              (Util.of_option_exn (Json.lookup j "dimensions")));
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module InternalServiceFault =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "Message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("Message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("Message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module DescribeAlarmHistoryInput =
   struct
@@ -1162,7 +1131,7 @@ module DescribeAlarmHistoryInput =
         end_date;
         max_records;
         next_token
-      } 
+      }
     let parse xml =
       Some
         {
@@ -1180,40 +1149,37 @@ module DescribeAlarmHistoryInput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Util.option_map v.max_records
-             (fun f  -> Query.Pair ("MaxRecords", (Integer.to_query f)));
+             (fun f -> Query.Pair ("MaxRecords", (Integer.to_query f)));
            Util.option_map v.end_date
-             (fun f  -> Query.Pair ("EndDate", (DateTime.to_query f)));
+             (fun f -> Query.Pair ("EndDate", (DateTime.to_query f)));
            Util.option_map v.start_date
-             (fun f  -> Query.Pair ("StartDate", (DateTime.to_query f)));
+             (fun f -> Query.Pair ("StartDate", (DateTime.to_query f)));
            Util.option_map v.history_item_type
-             (fun f  ->
+             (fun f ->
                 Query.Pair ("HistoryItemType", (HistoryItemType.to_query f)));
            Util.option_map v.alarm_name
-             (fun f  -> Query.Pair ("AlarmName", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("AlarmName", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Util.option_map v.max_records
-             (fun f  -> ("max_records", (Integer.to_json f)));
+             (fun f -> ("max_records", (Integer.to_json f)));
            Util.option_map v.end_date
-             (fun f  -> ("end_date", (DateTime.to_json f)));
+             (fun f -> ("end_date", (DateTime.to_json f)));
            Util.option_map v.start_date
-             (fun f  -> ("start_date", (DateTime.to_json f)));
+             (fun f -> ("start_date", (DateTime.to_json f)));
            Util.option_map v.history_item_type
-             (fun f  -> ("history_item_type", (HistoryItemType.to_json f)));
+             (fun f -> ("history_item_type", (HistoryItemType.to_json f)));
            Util.option_map v.alarm_name
-             (fun f  -> ("alarm_name", (String.to_json f)))])
-      
+             (fun f -> ("alarm_name", (String.to_json f)))])
     let of_json j =
       {
         alarm_name =
@@ -1229,7 +1195,7 @@ module DescribeAlarmHistoryInput =
           (Util.option_map (Json.lookup j "max_records") Integer.of_json);
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module DescribeAlarmsInput =
   struct
@@ -1250,7 +1216,7 @@ module DescribeAlarmsInput =
         action_prefix;
         max_records;
         next_token
-      } 
+      }
     let parse xml =
       Some
         {
@@ -1269,39 +1235,36 @@ module DescribeAlarmsInput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Util.option_map v.max_records
-             (fun f  -> Query.Pair ("MaxRecords", (Integer.to_query f)));
+             (fun f -> Query.Pair ("MaxRecords", (Integer.to_query f)));
            Util.option_map v.action_prefix
-             (fun f  -> Query.Pair ("ActionPrefix", (String.to_query f)));
+             (fun f -> Query.Pair ("ActionPrefix", (String.to_query f)));
            Util.option_map v.state_value
-             (fun f  -> Query.Pair ("StateValue", (StateValue.to_query f)));
+             (fun f -> Query.Pair ("StateValue", (StateValue.to_query f)));
            Util.option_map v.alarm_name_prefix
-             (fun f  -> Query.Pair ("AlarmNamePrefix", (String.to_query f)));
+             (fun f -> Query.Pair ("AlarmNamePrefix", (String.to_query f)));
            Some
              (Query.Pair
                 ("AlarmNames.member", (AlarmNames.to_query v.alarm_names)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Util.option_map v.max_records
-             (fun f  -> ("max_records", (Integer.to_json f)));
+             (fun f -> ("max_records", (Integer.to_json f)));
            Util.option_map v.action_prefix
-             (fun f  -> ("action_prefix", (String.to_json f)));
+             (fun f -> ("action_prefix", (String.to_json f)));
            Util.option_map v.state_value
-             (fun f  -> ("state_value", (StateValue.to_json f)));
+             (fun f -> ("state_value", (StateValue.to_json f)));
            Util.option_map v.alarm_name_prefix
-             (fun f  -> ("alarm_name_prefix", (String.to_json f)));
+             (fun f -> ("alarm_name_prefix", (String.to_json f)));
            Some ("alarm_names", (AlarmNames.to_json v.alarm_names))])
-      
     let of_json j =
       {
         alarm_names =
@@ -1317,35 +1280,32 @@ module DescribeAlarmsInput =
           (Util.option_map (Json.lookup j "max_records") Integer.of_json);
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module LimitExceededFault =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module PutMetricAlarmInput =
   struct
@@ -1386,7 +1346,7 @@ module PutMetricAlarmInput =
         evaluation_periods;
         threshold;
         comparison_operator
-      } 
+      }
     let parse xml =
       Some
         {
@@ -1440,7 +1400,6 @@ module PutMetricAlarmInput =
                (Util.option_bind (Xml.member "ComparisonOperator" xml)
                   ComparisonOperator.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -1454,7 +1413,7 @@ module PutMetricAlarmInput =
                 ("EvaluationPeriods",
                   (Integer.to_query v.evaluation_periods)));
            Util.option_map v.unit
-             (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+             (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Some (Query.Pair ("Period", (Integer.to_query v.period)));
            Some
              (Query.Pair
@@ -1474,11 +1433,10 @@ module PutMetricAlarmInput =
              (Query.Pair
                 ("OKActions.member", (ResourceList.to_query v.o_k_actions)));
            Util.option_map v.actions_enabled
-             (fun f  -> Query.Pair ("ActionsEnabled", (Boolean.to_query f)));
+             (fun f -> Query.Pair ("ActionsEnabled", (Boolean.to_query f)));
            Util.option_map v.alarm_description
-             (fun f  -> Query.Pair ("AlarmDescription", (String.to_query f)));
+             (fun f -> Query.Pair ("AlarmDescription", (String.to_query f)));
            Some (Query.Pair ("AlarmName", (String.to_query v.alarm_name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
@@ -1489,7 +1447,7 @@ module PutMetricAlarmInput =
            Some
              ("evaluation_periods", (Integer.to_json v.evaluation_periods));
            Util.option_map v.unit
-             (fun f  -> ("unit", (StandardUnit.to_json f)));
+             (fun f -> ("unit", (StandardUnit.to_json f)));
            Some ("period", (Integer.to_json v.period));
            Some ("dimensions", (Dimensions.to_json v.dimensions));
            Some ("statistic", (Statistic.to_json v.statistic));
@@ -1501,11 +1459,10 @@ module PutMetricAlarmInput =
            Some ("alarm_actions", (ResourceList.to_json v.alarm_actions));
            Some ("o_k_actions", (ResourceList.to_json v.o_k_actions));
            Util.option_map v.actions_enabled
-             (fun f  -> ("actions_enabled", (Boolean.to_json f)));
+             (fun f -> ("actions_enabled", (Boolean.to_json f)));
            Util.option_map v.alarm_description
-             (fun f  -> ("alarm_description", (String.to_json f)));
+             (fun f -> ("alarm_description", (String.to_json f)));
            Some ("alarm_name", (String.to_json v.alarm_name))])
-      
     let of_json j =
       {
         alarm_name =
@@ -1543,7 +1500,7 @@ module PutMetricAlarmInput =
         comparison_operator =
           (ComparisonOperator.of_json
              (Util.of_option_exn (Json.lookup j "comparison_operator")))
-      } 
+      }
   end
 module SetAlarmStateInput =
   struct
@@ -1554,7 +1511,7 @@ module SetAlarmStateInput =
       state_reason: String.t ;
       state_reason_data: String.t option }
     let make ~alarm_name  ~state_value  ~state_reason  ?state_reason_data  ()
-      = { alarm_name; state_value; state_reason; state_reason_data } 
+      = { alarm_name; state_value; state_reason; state_reason_data }
     let parse xml =
       Some
         {
@@ -1571,27 +1528,24 @@ module SetAlarmStateInput =
           state_reason_data =
             (Util.option_bind (Xml.member "StateReasonData" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.state_reason_data
-              (fun f  -> Query.Pair ("StateReasonData", (String.to_query f)));
+              (fun f -> Query.Pair ("StateReasonData", (String.to_query f)));
            Some
              (Query.Pair ("StateReason", (String.to_query v.state_reason)));
            Some
              (Query.Pair ("StateValue", (StateValue.to_query v.state_value)));
            Some (Query.Pair ("AlarmName", (String.to_query v.alarm_name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.state_reason_data
-              (fun f  -> ("state_reason_data", (String.to_json f)));
+              (fun f -> ("state_reason_data", (String.to_json f)));
            Some ("state_reason", (String.to_json v.state_reason));
            Some ("state_value", (StateValue.to_json v.state_value));
            Some ("alarm_name", (String.to_json v.alarm_name))])
-      
     let of_json j =
       {
         alarm_name =
@@ -1603,13 +1557,13 @@ module SetAlarmStateInput =
           (String.of_json (Util.of_option_exn (Json.lookup j "state_reason")));
         state_reason_data =
           (Util.option_map (Json.lookup j "state_reason_data") String.of_json)
-      } 
+      }
   end
 module EnableAlarmActionsInput =
   struct
     type t = {
       alarm_names: AlarmNames.t }
-    let make ~alarm_names  () = { alarm_names } 
+    let make ~alarm_names  () = { alarm_names }
     let parse xml =
       Some
         {
@@ -1618,25 +1572,22 @@ module EnableAlarmActionsInput =
                (Util.option_bind (Xml.member "AlarmNames" xml)
                   AlarmNames.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Some
               (Query.Pair
                  ("AlarmNames.member", (AlarmNames.to_query v.alarm_names)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("alarm_names", (AlarmNames.to_json v.alarm_names))])
-      
     let of_json j =
       {
         alarm_names =
           (AlarmNames.of_json
              (Util.of_option_exn (Json.lookup j "alarm_names")))
-      } 
+      }
   end
 module DescribeAlarmsForMetricInput =
   struct
@@ -1650,7 +1601,7 @@ module DescribeAlarmsForMetricInput =
       unit: StandardUnit.t option }
     let make ~metric_name  ~namespace  ?statistic  ?(dimensions= [])  ?period
        ?unit  () =
-      { metric_name; namespace; statistic; dimensions; period; unit } 
+      { metric_name; namespace; statistic; dimensions; period; unit }
     let parse xml =
       Some
         {
@@ -1670,35 +1621,32 @@ module DescribeAlarmsForMetricInput =
           unit =
             (Util.option_bind (Xml.member "Unit" xml) StandardUnit.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+              (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Util.option_map v.period
-             (fun f  -> Query.Pair ("Period", (Integer.to_query f)));
+             (fun f -> Query.Pair ("Period", (Integer.to_query f)));
            Some
              (Query.Pair
                 ("Dimensions.member", (Dimensions.to_query v.dimensions)));
            Util.option_map v.statistic
-             (fun f  -> Query.Pair ("Statistic", (Statistic.to_query f)));
+             (fun f -> Query.Pair ("Statistic", (Statistic.to_query f)));
            Some (Query.Pair ("Namespace", (String.to_query v.namespace)));
            Some (Query.Pair ("MetricName", (String.to_query v.metric_name)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> ("unit", (StandardUnit.to_json f)));
+              (fun f -> ("unit", (StandardUnit.to_json f)));
            Util.option_map v.period
-             (fun f  -> ("period", (Integer.to_json f)));
+             (fun f -> ("period", (Integer.to_json f)));
            Some ("dimensions", (Dimensions.to_json v.dimensions));
            Util.option_map v.statistic
-             (fun f  -> ("statistic", (Statistic.to_json f)));
+             (fun f -> ("statistic", (Statistic.to_json f)));
            Some ("namespace", (String.to_json v.namespace));
            Some ("metric_name", (String.to_json v.metric_name))])
-      
     let of_json j =
       {
         metric_name =
@@ -1712,63 +1660,57 @@ module DescribeAlarmsForMetricInput =
              (Util.of_option_exn (Json.lookup j "dimensions")));
         period = (Util.option_map (Json.lookup j "period") Integer.of_json);
         unit = (Util.option_map (Json.lookup j "unit") StandardUnit.of_json)
-      } 
+      }
   end
 module InvalidParameterValueException =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module ResourceNotFound =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module DescribeAlarmsOutput =
   struct
@@ -1776,7 +1718,7 @@ module DescribeAlarmsOutput =
       metric_alarms: MetricAlarms.t ;
       next_token: String.t option }
     let make ?(metric_alarms= [])  ?next_token  () =
-      { metric_alarms; next_token } 
+      { metric_alarms; next_token }
     let parse xml =
       Some
         {
@@ -1787,24 +1729,21 @@ module DescribeAlarmsOutput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Some
              (Query.Pair
                 ("MetricAlarms.member",
                   (MetricAlarms.to_query v.metric_alarms)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Some ("metric_alarms", (MetricAlarms.to_json v.metric_alarms))])
-      
     let of_json j =
       {
         metric_alarms =
@@ -1812,98 +1751,89 @@ module DescribeAlarmsOutput =
              (Util.of_option_exn (Json.lookup j "metric_alarms")));
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module InvalidNextToken =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module InvalidParameterCombinationException =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module MissingRequiredParameterException =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module ListMetricsOutput =
   struct
     type t = {
       metrics: Metrics.t ;
       next_token: String.t option }
-    let make ?(metrics= [])  ?next_token  () = { metrics; next_token } 
+    let make ?(metrics= [])  ?next_token  () = { metrics; next_token }
     let parse xml =
       Some
         {
@@ -1913,56 +1843,50 @@ module ListMetricsOutput =
           next_token =
             (Util.option_bind (Xml.member "NextToken" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> Query.Pair ("NextToken", (String.to_query f)));
+              (fun f -> Query.Pair ("NextToken", (String.to_query f)));
            Some (Query.Pair ("Metrics.member", (Metrics.to_query v.metrics)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.next_token
-              (fun f  -> ("next_token", (String.to_json f)));
+              (fun f -> ("next_token", (String.to_json f)));
            Some ("metrics", (Metrics.to_json v.metrics))])
-      
     let of_json j =
       {
         metrics =
           (Metrics.of_json (Util.of_option_exn (Json.lookup j "metrics")));
         next_token =
           (Util.option_map (Json.lookup j "next_token") String.of_json)
-      } 
+      }
   end
 module InvalidFormatFault =
   struct
     type t = {
       message: String.t option }
-    let make ?message  () = { message } 
+    let make ?message  () = { message }
     let parse xml =
       Some
         {
           message =
             (Util.option_bind (Xml.member "message" xml) String.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> Query.Pair ("message", (String.to_query f)))])
-      
+              (fun f -> Query.Pair ("message", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.message
-              (fun f  -> ("message", (String.to_json f)))])
-      
+              (fun f -> ("message", (String.to_json f)))])
     let of_json j =
       { message = (Util.option_map (Json.lookup j "message") String.of_json)
-      } 
+      }
   end
 module GetMetricStatisticsInput =
   struct
@@ -1987,7 +1911,7 @@ module GetMetricStatisticsInput =
         period;
         statistics;
         unit
-      } 
+      }
     let parse xml =
       Some
         {
@@ -2017,12 +1941,11 @@ module GetMetricStatisticsInput =
           unit =
             (Util.option_bind (Xml.member "Unit" xml) StandardUnit.parse)
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> Query.Pair ("Unit", (StandardUnit.to_query f)));
+              (fun f -> Query.Pair ("Unit", (StandardUnit.to_query f)));
            Some
              (Query.Pair
                 ("Statistics.member", (Statistics.to_query v.statistics)));
@@ -2034,12 +1957,11 @@ module GetMetricStatisticsInput =
                 ("Dimensions.member", (Dimensions.to_query v.dimensions)));
            Some (Query.Pair ("MetricName", (String.to_query v.metric_name)));
            Some (Query.Pair ("Namespace", (String.to_query v.namespace)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Util.option_map v.unit
-              (fun f  -> ("unit", (StandardUnit.to_json f)));
+              (fun f -> ("unit", (StandardUnit.to_json f)));
            Some ("statistics", (Statistics.to_json v.statistics));
            Some ("period", (Integer.to_json v.period));
            Some ("end_time", (DateTime.to_json v.end_time));
@@ -2047,7 +1969,6 @@ module GetMetricStatisticsInput =
            Some ("dimensions", (Dimensions.to_json v.dimensions));
            Some ("metric_name", (String.to_json v.metric_name));
            Some ("namespace", (String.to_json v.namespace))])
-      
     let of_json j =
       {
         namespace =
@@ -2067,14 +1988,14 @@ module GetMetricStatisticsInput =
           (Statistics.of_json
              (Util.of_option_exn (Json.lookup j "statistics")));
         unit = (Util.option_map (Json.lookup j "unit") StandardUnit.of_json)
-      } 
+      }
   end
 module PutMetricDataInput =
   struct
     type t = {
       namespace: String.t ;
       metric_data: MetricData.t }
-    let make ~namespace  ~metric_data  () = { namespace; metric_data } 
+    let make ~namespace  ~metric_data  () = { namespace; metric_data }
     let parse xml =
       Some
         {
@@ -2086,7 +2007,6 @@ module PutMetricDataInput =
                (Util.option_bind (Xml.member "MetricData" xml)
                   MetricData.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -2094,13 +2014,11 @@ module PutMetricDataInput =
               (Query.Pair
                  ("MetricData.member", (MetricData.to_query v.metric_data)));
            Some (Query.Pair ("Namespace", (String.to_query v.namespace)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("metric_data", (MetricData.to_json v.metric_data));
            Some ("namespace", (String.to_json v.namespace))])
-      
     let of_json j =
       {
         namespace =
@@ -2108,13 +2026,13 @@ module PutMetricDataInput =
         metric_data =
           (MetricData.of_json
              (Util.of_option_exn (Json.lookup j "metric_data")))
-      } 
+      }
   end
 module DescribeAlarmsForMetricOutput =
   struct
     type t = {
       metric_alarms: MetricAlarms.t }
-    let make ?(metric_alarms= [])  () = { metric_alarms } 
+    let make ?(metric_alarms= [])  () = { metric_alarms }
     let parse xml =
       Some
         {
@@ -2123,7 +2041,6 @@ module DescribeAlarmsForMetricOutput =
                (Util.option_bind (Xml.member "MetricAlarms" xml)
                   MetricAlarms.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -2131,24 +2048,22 @@ module DescribeAlarmsForMetricOutput =
               (Query.Pair
                  ("MetricAlarms.member",
                    (MetricAlarms.to_query v.metric_alarms)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("metric_alarms", (MetricAlarms.to_json v.metric_alarms))])
-      
     let of_json j =
       {
         metric_alarms =
           (MetricAlarms.of_json
              (Util.of_option_exn (Json.lookup j "metric_alarms")))
-      } 
+      }
   end
 module DeleteAlarmsInput =
   struct
     type t = {
       alarm_names: AlarmNames.t }
-    let make ~alarm_names  () = { alarm_names } 
+    let make ~alarm_names  () = { alarm_names }
     let parse xml =
       Some
         {
@@ -2157,31 +2072,28 @@ module DeleteAlarmsInput =
                (Util.option_bind (Xml.member "AlarmNames" xml)
                   AlarmNames.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Some
               (Query.Pair
                  ("AlarmNames.member", (AlarmNames.to_query v.alarm_names)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("alarm_names", (AlarmNames.to_json v.alarm_names))])
-      
     let of_json j =
       {
         alarm_names =
           (AlarmNames.of_json
              (Util.of_option_exn (Json.lookup j "alarm_names")))
-      } 
+      }
   end
 module DisableAlarmActionsInput =
   struct
     type t = {
       alarm_names: AlarmNames.t }
-    let make ~alarm_names  () = { alarm_names } 
+    let make ~alarm_names  () = { alarm_names }
     let parse xml =
       Some
         {
@@ -2190,32 +2102,29 @@ module DisableAlarmActionsInput =
                (Util.option_bind (Xml.member "AlarmNames" xml)
                   AlarmNames.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
            [Some
               (Query.Pair
                  ("AlarmNames.member", (AlarmNames.to_query v.alarm_names)))])
-      
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("alarm_names", (AlarmNames.to_json v.alarm_names))])
-      
     let of_json j =
       {
         alarm_names =
           (AlarmNames.of_json
              (Util.of_option_exn (Json.lookup j "alarm_names")))
-      } 
+      }
   end
 module GetMetricStatisticsOutput =
   struct
     type t = {
       label: String.t option ;
       datapoints: Datapoints.t }
-    let make ?label  ?(datapoints= [])  () = { label; datapoints } 
+    let make ?label  ?(datapoints= [])  () = { label; datapoints }
     let parse xml =
       Some
         {
@@ -2225,7 +2134,6 @@ module GetMetricStatisticsOutput =
                (Util.option_bind (Xml.member "Datapoints" xml)
                   Datapoints.parse))
         }
-      
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -2233,19 +2141,17 @@ module GetMetricStatisticsOutput =
               (Query.Pair
                  ("Datapoints.member", (Datapoints.to_query v.datapoints)));
            Util.option_map v.label
-             (fun f  -> Query.Pair ("Label", (String.to_query f)))])
-      
+             (fun f -> Query.Pair ("Label", (String.to_query f)))])
     let to_json v =
       `Assoc
         (Util.list_filter_opt
            [Some ("datapoints", (Datapoints.to_json v.datapoints));
-           Util.option_map v.label (fun f  -> ("label", (String.to_json f)))])
-      
+           Util.option_map v.label (fun f -> ("label", (String.to_json f)))])
     let of_json j =
       {
         label = (Util.option_map (Json.lookup j "label") String.of_json);
         datapoints =
           (Datapoints.of_json
              (Util.of_option_exn (Json.lookup j "datapoints")))
-      } 
+      }
   end
