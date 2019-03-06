@@ -61,6 +61,9 @@ module Util = struct
     | [] -> Some []
     | (Some v) :: xs -> option_bind (option_all xs) (fun rest -> Some (v :: rest))
     | None :: _ -> None
+  let str_starts_with prefix s =
+    let re = Str.regexp_case_fold ("^" ^ (prefix ^ ".*")) in
+    Str.string_partial_match re s 0
 end
 
 module Xml = struct
@@ -186,7 +189,7 @@ module type Call = sig
   type error
 
   val service : string
-  val to_http : input -> Request.t
+  val to_http : string -> input -> Request.t
   val of_http : string -> [`Ok of output | `Error of error Error.error_response]
   val parse_error : int -> string -> error option
 end
@@ -261,7 +264,7 @@ module Json = struct
         (Hashtbl.create (List.length m))
         m
     | t        -> raise (Casting_error("map", t))
-  
+
   let lookup t s =
     try match t with
       | `Assoc l -> Some (List.assoc s l)

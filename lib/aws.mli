@@ -129,7 +129,7 @@ module type Call = sig
       type. In particular, it is responsible for properly encoding the
       request type into query format. It also sets the Action and
       Version query parameters. *)
-  val to_http : input -> Request.t
+  val to_http : string -> input -> Request.t
 
   (** This function converts from a HTTP response body to an output
       or an error if the response could not be decoded. *)
@@ -217,9 +217,9 @@ module Xml : sig
 end
 
 (** This module contains a Json type (compatible with
-    Yojson.Basic.json) and helpers. *)
+    Yojson.Basic.t) and helpers. *)
 module Json : sig
-  (** Json type. This is compatible with Yojson.Basic.json *)
+  (** Json type. This is compatible with Yojson.Basic.t *)
   type t =
     [ `Assoc of (string * t) list
     | `Bool of bool
@@ -240,7 +240,7 @@ module Json : sig
   (** This converts an `Assoc (string * t list) to ('a, 'b) Hashtbl.t, or throws a
       Casting_error in the case that the input is not an `Assoc. *)
   val to_hashtbl: (string -> 'a) -> (t -> 'b) -> t -> ('a, 'b) Hashtbl.t
-        
+
   (** If t is an `Assoc, this looks up the field specified. If it
       isn't found, or if the input is not an `Assoc, returns None. *)
   val lookup : t -> string -> t option
@@ -278,6 +278,8 @@ module Util : sig
   (** If all values in list are Some v, produce Some (list_filter_opt
       list), else produce None. *)
   val option_all : 'a option list -> 'a list option
+
+  val str_starts_with : string -> string -> bool
 end
 
 (** This module contains the V4 Authorization header AWS signature
