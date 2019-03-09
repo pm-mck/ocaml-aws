@@ -397,6 +397,8 @@ module BaseTypes = struct
 
 end
 
+module Endpoints = Endpoints
+
 module Signing = struct
 
     module Hash = struct
@@ -439,7 +441,7 @@ module Signing = struct
      * http://docs.aws.amazon.com/general/latest/gr/sigv4-signed-request-examples.html
      *)
     let sign_request ~access_key ~secret_key ~service ~region (meth, uri, headers) =
-      let host = service ^ ".amazonaws.com" in
+      let host = Util.of_option_exn (Endpoints.endpoint_of service region) in
       let params = encode_query (Uri.query uri) in
       let sign key msg = Hash.sha256 ~key msg in
       let get_signature_key key date region service =
@@ -463,4 +465,4 @@ module Signing = struct
       (meth, uri, headers)
   end
 
-module Endpoints = Endpoints
+
