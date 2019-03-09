@@ -43,7 +43,7 @@ let is_list ~shapes ~shp =
     | _            -> false
   with Not_found -> false
 
-let is_flat ~shapes ~shp =
+let is_flat_list ~shapes ~shp =
   try
     match (StringTable.find shp shapes).Shape.content with
     | Shape.List (_,_,true) -> true
@@ -156,7 +156,14 @@ let types is_ec2 shapes =
               | Some name -> name
               | None      -> mem.Structure.name
             in
-            let b = Syntax.(app2 "Util.option_bind"
+            let b = if is_flat_list ~shapes ~shp:mem.Structure.shape then
+              Syntax.(
+                app1 "Util.of_option_exn"
+                  (app1 (mem.Structure.shape ^ ".parse")
+                    (ident "xml"))
+              )
+            else
+              Syntax.(app2 "Util.option_bind"
                               (app2 "Xml.member" (str loc_name) (ident "xml"))
                               (ident (mem.Structure.shape ^ ".parse")))
             in
@@ -165,7 +172,7 @@ let types is_ec2 shapes =
                 Syntax.(app2 "Xml.required" (str loc_name) b)
               else if is_list ~shapes ~shp:mem.Structure.shape then (
                 print_endline ("is_list " ^ mem.Structure.shape);
-                print_endline ("is_flat " ^ string_of_bool(is_flat ~shapes ~shp:mem.Structure.shape));
+                print_endline ("is_flat " ^ string_of_bool(is_flat_list ~shapes ~shp:mem.Structure.shape));
                 Syntax.(app2 "Util.of_option" (list []) b))
               else
                 b

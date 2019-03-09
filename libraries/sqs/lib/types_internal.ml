@@ -33,7 +33,7 @@ module MessageAttributeValue =
       string_list_values: StringList.t ;
       binary_list_values: BinaryList.t ;
       data_type: String.t }
-    let make ?string_value  ?binary_value  ?(string_list_values= [])
+    let make ?string_value  ?binary_value  ?(string_list_values= []) 
       ?(binary_list_values= [])  ~data_type  () =
       {
         string_value;
@@ -110,19 +110,19 @@ module MessageAttributeValue =
 module QueueAttributeName =
   struct
     type t =
-      | Policy
-      | VisibilityTimeout
-      | MaximumMessageSize
-      | MessageRetentionPeriod
-      | ApproximateNumberOfMessages
-      | ApproximateNumberOfMessagesNotVisible
-      | CreatedTimestamp
-      | LastModifiedTimestamp
-      | QueueArn
-      | ApproximateNumberOfMessagesDelayed
-      | DelaySeconds
-      | ReceiveMessageWaitTimeSeconds
-      | RedrivePolicy
+      | Policy 
+      | VisibilityTimeout 
+      | MaximumMessageSize 
+      | MessageRetentionPeriod 
+      | ApproximateNumberOfMessages 
+      | ApproximateNumberOfMessagesNotVisible 
+      | CreatedTimestamp 
+      | LastModifiedTimestamp 
+      | QueueArn 
+      | ApproximateNumberOfMessagesDelayed 
+      | DelaySeconds 
+      | ReceiveMessageWaitTimeSeconds 
+      | RedrivePolicy 
     let str_to_t =
       [("RedrivePolicy", RedrivePolicy);
       ("ReceiveMessageWaitTimeSeconds", ReceiveMessageWaitTimeSeconds);
@@ -433,7 +433,7 @@ module SendMessageBatchResultEntry =
       message_id: String.t ;
       m_d5_of_message_body: String.t ;
       m_d5_of_message_attributes: String.t option }
-    let make ~id  ~message_id  ~m_d5_of_message_body
+    let make ~id  ~message_id  ~m_d5_of_message_body 
       ?m_d5_of_message_attributes  () =
       { id; message_id; m_d5_of_message_body; m_d5_of_message_attributes }
     let parse xml =
@@ -499,7 +499,7 @@ module Message =
       attributes: AttributeMap.t option ;
       m_d5_of_message_attributes: String.t option ;
       message_attributes: MessageAttributeMap.t option }
-    let make ?message_id  ?receipt_handle  ?m_d5_of_body  ?body  ?attributes
+    let make ?message_id  ?receipt_handle  ?m_d5_of_body  ?body  ?attributes 
       ?m_d5_of_message_attributes  ?message_attributes  () =
       {
         message_id;
@@ -907,8 +907,8 @@ module ChangeMessageVisibilityBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.option_bind (Xml.member "Entries" xml)
-                  ChangeMessageVisibilityBatchRequestEntryList.parse))
+               (Util.of_option_exn
+                  (ChangeMessageVisibilityBatchRequestEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -951,8 +951,8 @@ module SendMessageBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.option_bind (Xml.member "Entries" xml)
-                  SendMessageBatchRequestEntryList.parse))
+               (Util.of_option_exn
+                  (SendMessageBatchRequestEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -993,8 +993,8 @@ module DeleteMessageBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.option_bind (Xml.member "Entries" xml)
-                  DeleteMessageBatchRequestEntryList.parse))
+               (Util.of_option_exn
+                  (DeleteMessageBatchRequestEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1032,12 +1032,11 @@ module ChangeMessageVisibilityBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.option_bind (Xml.member "Successful" xml)
-                  ChangeMessageVisibilityBatchResultEntryList.parse));
+               (Util.of_option_exn
+                  (ChangeMessageVisibilityBatchResultEntryList.parse xml)));
           failed =
             (Xml.required "Failed"
-               (Util.option_bind (Xml.member "Failed" xml)
-                  BatchResultErrorEntryList.parse))
+               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1114,12 +1113,11 @@ module SendMessageBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.option_bind (Xml.member "Successful" xml)
-                  SendMessageBatchResultEntryList.parse));
+               (Util.of_option_exn
+                  (SendMessageBatchResultEntryList.parse xml)));
           failed =
             (Xml.required "Failed"
-               (Util.option_bind (Xml.member "Failed" xml)
-                  BatchResultErrorEntryList.parse))
+               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1170,12 +1168,10 @@ module AddPermissionRequest =
                (Util.option_bind (Xml.member "Label" xml) String.parse));
           a_w_s_account_ids =
             (Xml.required "AWSAccountIds"
-               (Util.option_bind (Xml.member "AWSAccountIds" xml)
-                  AWSAccountIdList.parse));
+               (Util.of_option_exn (AWSAccountIdList.parse xml)));
           actions =
             (Xml.required "Actions"
-               (Util.option_bind (Xml.member "Actions" xml)
-                  ActionNameList.parse))
+               (Util.of_option_exn (ActionNameList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1285,7 +1281,7 @@ module ReceiveMessageRequest =
       visibility_timeout: Integer.t option ;
       wait_time_seconds: Integer.t option }
     let make ~queue_url  ?(attribute_names= [])  ?(message_attribute_names=
-      [])  ?max_number_of_messages  ?visibility_timeout  ?wait_time_seconds
+      [])  ?max_number_of_messages  ?visibility_timeout  ?wait_time_seconds 
       () =
       {
         queue_url;
@@ -1303,12 +1299,10 @@ module ReceiveMessageRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           attribute_names =
             (Util.of_option []
-               (Util.option_bind (Xml.member "AttributeNames" xml)
-                  AttributeNameList.parse));
+               (Util.of_option_exn (AttributeNameList.parse xml)));
           message_attribute_names =
             (Util.of_option []
-               (Util.option_bind (Xml.member "MessageAttributeNames" xml)
-                  MessageAttributeNameList.parse));
+               (Util.of_option_exn (MessageAttributeNameList.parse xml)));
           max_number_of_messages =
             (Util.option_bind (Xml.member "MaxNumberOfMessages" xml)
                Integer.parse);
@@ -1383,7 +1377,7 @@ module SendMessageResult =
       m_d5_of_message_body: String.t option ;
       m_d5_of_message_attributes: String.t option ;
       message_id: String.t option }
-    let make ?m_d5_of_message_body  ?m_d5_of_message_attributes  ?message_id
+    let make ?m_d5_of_message_body  ?m_d5_of_message_attributes  ?message_id 
       () = { m_d5_of_message_body; m_d5_of_message_attributes; message_id }
     let parse xml =
       Some
@@ -1509,7 +1503,7 @@ module SendMessageRequest =
       message_body: String.t ;
       delay_seconds: Integer.t option ;
       message_attributes: MessageAttributeMap.t option }
-    let make ~queue_url  ~message_body  ?delay_seconds  ?message_attributes
+    let make ~queue_url  ~message_body  ?delay_seconds  ?message_attributes 
       () = { queue_url; message_body; delay_seconds; message_attributes }
     let parse xml =
       Some
@@ -1580,8 +1574,7 @@ module ListDeadLetterSourceQueuesResult =
         {
           queue_urls =
             (Xml.required "queueUrls"
-               (Util.option_bind (Xml.member "queueUrls" xml)
-                  QueueUrlList.parse))
+               (Util.of_option_exn (QueueUrlList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1708,7 +1701,7 @@ module ReceiveMessageResult =
       Some
         {
           messages =
-            Util.of_option_exn (MessageList.parse xml)
+            (Util.of_option [] (Util.of_option_exn (MessageList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1742,8 +1735,7 @@ module GetQueueAttributesRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           attribute_names =
             (Util.of_option []
-               (Util.option_bind (Xml.member "AttributeNames" xml)
-                  AttributeNameList.parse))
+               (Util.of_option_exn (AttributeNameList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1790,12 +1782,11 @@ module DeleteMessageBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.option_bind (Xml.member "Successful" xml)
-                  DeleteMessageBatchResultEntryList.parse));
+               (Util.of_option_exn
+                  (DeleteMessageBatchResultEntryList.parse xml)));
           failed =
             (Xml.required "Failed"
-               (Util.option_bind (Xml.member "Failed" xml)
-                  BatchResultErrorEntryList.parse))
+               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
         }
     let to_query v =
       Query.List
@@ -1843,9 +1834,7 @@ module ListQueuesResult =
       Some
         {
           queue_urls =
-            (Util.of_option []
-               (Util.option_bind (Xml.member "QueueUrls" xml)
-                  QueueUrlList.parse))
+            (Util.of_option [] (Util.of_option_exn (QueueUrlList.parse xml)))
         }
     let to_query v =
       Query.List
