@@ -33,7 +33,7 @@ module MessageAttributeValue =
       string_list_values: StringList.t ;
       binary_list_values: BinaryList.t ;
       data_type: String.t }
-    let make ?string_value  ?binary_value  ?(string_list_values= []) 
+    let make ?string_value  ?binary_value  ?(string_list_values= [])
       ?(binary_list_values= [])  ~data_type  () =
       {
         string_value;
@@ -110,19 +110,19 @@ module MessageAttributeValue =
 module QueueAttributeName =
   struct
     type t =
-      | Policy 
-      | VisibilityTimeout 
-      | MaximumMessageSize 
-      | MessageRetentionPeriod 
-      | ApproximateNumberOfMessages 
-      | ApproximateNumberOfMessagesNotVisible 
-      | CreatedTimestamp 
-      | LastModifiedTimestamp 
-      | QueueArn 
-      | ApproximateNumberOfMessagesDelayed 
-      | DelaySeconds 
-      | ReceiveMessageWaitTimeSeconds 
-      | RedrivePolicy 
+      | Policy
+      | VisibilityTimeout
+      | MaximumMessageSize
+      | MessageRetentionPeriod
+      | ApproximateNumberOfMessages
+      | ApproximateNumberOfMessagesNotVisible
+      | CreatedTimestamp
+      | LastModifiedTimestamp
+      | QueueArn
+      | ApproximateNumberOfMessagesDelayed
+      | DelaySeconds
+      | ReceiveMessageWaitTimeSeconds
+      | RedrivePolicy
     let str_to_t =
       [("RedrivePolicy", RedrivePolicy);
       ("ReceiveMessageWaitTimeSeconds", ReceiveMessageWaitTimeSeconds);
@@ -433,7 +433,7 @@ module SendMessageBatchResultEntry =
       message_id: String.t ;
       m_d5_of_message_body: String.t ;
       m_d5_of_message_attributes: String.t option }
-    let make ~id  ~message_id  ~m_d5_of_message_body 
+    let make ~id  ~message_id  ~m_d5_of_message_body
       ?m_d5_of_message_attributes  () =
       { id; message_id; m_d5_of_message_body; m_d5_of_message_attributes }
     let parse xml =
@@ -499,7 +499,7 @@ module Message =
       attributes: AttributeMap.t option ;
       m_d5_of_message_attributes: String.t option ;
       message_attributes: MessageAttributeMap.t option }
-    let make ?message_id  ?receipt_handle  ?m_d5_of_body  ?body  ?attributes 
+    let make ?message_id  ?receipt_handle  ?m_d5_of_body  ?body  ?attributes
       ?m_d5_of_message_attributes  ?message_attributes  () =
       {
         message_id;
@@ -745,6 +745,7 @@ module MessageList =
     type t = Message.t list
     let make elems () = elems
     let parse xml =
+      print_endline ("size of message list " ^ (List.length (Xml.members xml)));
       Util.option_all (List.map Message.parse (Xml.members "Message" xml))
     let to_query v = Query.to_query_list Message.to_query v
     let to_json v = `List (List.map Message.to_json v)
@@ -1285,7 +1286,7 @@ module ReceiveMessageRequest =
       visibility_timeout: Integer.t option ;
       wait_time_seconds: Integer.t option }
     let make ~queue_url  ?(attribute_names= [])  ?(message_attribute_names=
-      [])  ?max_number_of_messages  ?visibility_timeout  ?wait_time_seconds 
+      [])  ?max_number_of_messages  ?visibility_timeout  ?wait_time_seconds
       () =
       {
         queue_url;
@@ -1383,7 +1384,7 @@ module SendMessageResult =
       m_d5_of_message_body: String.t option ;
       m_d5_of_message_attributes: String.t option ;
       message_id: String.t option }
-    let make ?m_d5_of_message_body  ?m_d5_of_message_attributes  ?message_id 
+    let make ?m_d5_of_message_body  ?m_d5_of_message_attributes  ?message_id
       () = { m_d5_of_message_body; m_d5_of_message_attributes; message_id }
     let parse xml =
       Some
@@ -1509,7 +1510,7 @@ module SendMessageRequest =
       message_body: String.t ;
       delay_seconds: Integer.t option ;
       message_attributes: MessageAttributeMap.t option }
-    let make ~queue_url  ~message_body  ?delay_seconds  ?message_attributes 
+    let make ~queue_url  ~message_body  ?delay_seconds  ?message_attributes
       () = { queue_url; message_body; delay_seconds; message_attributes }
     let parse xml =
       Some
