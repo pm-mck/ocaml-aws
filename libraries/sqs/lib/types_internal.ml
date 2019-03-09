@@ -1708,7 +1708,7 @@ module ReceiveMessageResult =
       Some
         {
           messages =
-            (MessageList.parse xml)
+            Util.of_option_exn (MessageList.parse xml)
         }
     let to_query v =
       Query.List
