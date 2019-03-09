@@ -745,7 +745,6 @@ module MessageList =
     type t = Message.t list
     let make elems () = elems
     let parse xml =
-      print_endline ("size of message list " ^ (string_of_int (List.length (Xml.members "Message" xml))));
       Util.option_all (List.map Message.parse (Xml.members "Message" xml))
     let to_query v = Query.to_query_list Message.to_query v
     let to_json v = `List (List.map Message.to_json v)
@@ -1710,8 +1709,7 @@ module ReceiveMessageResult =
         {
           messages =
             (Util.of_option []
-               (Util.option_bind (Xml.member "Messages" xml)
-                  MessageList.parse))
+                  MessageList.parse xml)
         }
     let to_query v =
       Query.List

@@ -16,8 +16,6 @@ let to_http service region req =
                (Query.render (ReceiveMessageRequest.to_query req))))) in
   (`POST, uri, [])
 let of_http body =
-  print_endline "the body";
-  print_endline body;
   try
     let xml = Ezxmlm.from_string body in
     let resp =
