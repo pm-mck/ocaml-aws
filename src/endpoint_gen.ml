@@ -3,15 +3,10 @@ open Cmdliner
 let (</>) a b = Filename.concat a b
 let log s = Printf.eprintf (s ^^ "\n%!")
 
-let print_partition (p : Endpoints_t.partition) =
-  print_endline ("dns_suffix: " ^ p.dns_suffix);
-  print_endline ("partition: " ^ p.partition);
-  print_endline ("partition_name: " ^ p.partition_name);;
-
 let var_replace hostname service_name region dns_suffix =
   let hostname = Str.replace_first (Str.regexp_string {|{region}|}) region hostname in
   let hostname = Str.replace_first (Str.regexp_string {|{service}|}) service_name hostname in
-  Str.replace_first (Str.regexp_string {|{dnsSuffix}|}) dns_suffix hostname
+  "https://" ^ (Str.replace_first (Str.regexp_string {|{dnsSuffix}|}) dns_suffix hostname)
 
 let write_endpoint
   region
