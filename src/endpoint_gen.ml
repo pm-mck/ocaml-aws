@@ -3,30 +3,30 @@ open Cmdliner
 let (</>) a b = Filename.concat a b
 let log s = Printf.eprintf (s ^^ "\n%!")
 
-let var_replace hostname service_name region dns_suffix =
+let var_replace hostname svc_name region dns_suffix =
   let hostname = Str.replace_first (Str.regexp_string {|{region}|}) region hostname in
-  let hostname = Str.replace_first (Str.regexp_string {|{service}|}) service_name hostname in
+  let hostname = Str.replace_first (Str.regexp_string {|{service}|}) svc_name hostname in
   "https://" ^ (Str.replace_first (Str.regexp_string {|{dnsSuffix}|}) dns_suffix hostname)
 
 let write_endpoint
-  region
+  svc_name
   dns_suffix
   (default_hostname : string option)
-  ((service_name, endpoint) : (string * Endpoints_t.endpoint)) = Syntax.(
+  ((region, endpoint) : (string * Endpoints_t.endpoint)) = Syntax.(
   let host = match (endpoint.hostname, default_hostname) with
     | (None, None) -> (ident "None")
-    | (None, Some(h))
-    | (Some(h), _) -> (app1 "Some" (str (var_replace h service_name region dns_suffix))) in
-  (service_name, host)
+    | (None, Some(hostname))
+    | (Some(hostname), _) -> (app1 "Some" (str (var_replace hostname svc_name region dns_suffix))) in
+  (region, host)
 )
 
 let write_service
   dns_suffix
   (partition_defaults : Endpoints_t.partition_defaults)
-  ((region, svc) : (string * Endpoints_t.service)) = Syntax.(
-  (region, (matchstrs
+  ((svc_name, svc) : (string * Endpoints_t.service)) = Syntax.(
+  (svc_name, (matchstrs
     (ident "region")
-    (svc.endpoints |> List.map (write_endpoint region dns_suffix partition_defaults.hostname))
+    (svc.endpoints |> List.map (write_endpoint svc_name dns_suffix partition_defaults.hostname))
     (ident "None")))
 )
 
