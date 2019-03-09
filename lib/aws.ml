@@ -189,7 +189,7 @@ module type Call = sig
   type error
 
   val service : string
-  val to_http : string -> input -> Request.t
+  val to_http : string -> string -> input -> Request.t
   val of_http : string -> [`Ok of output | `Error of error Error.error_response]
   val parse_error : int -> string -> error option
 end
