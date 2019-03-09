@@ -8,7 +8,7 @@ let to_http service region req =
   let uri =
     Uri.add_query_params
       (Uri.of_string
-         (Aws.Util.of_option_exn (Endpoints.endpoint_of service region)))
+         (Aws.Util.of_option_exn (Endpoints.url_of service region)))
       (List.append [("Version", ["2012-11-05"]); ("Action", ["GetQueueUrl"])]
          (Util.drop_empty
             (Uri.query_of_encoded

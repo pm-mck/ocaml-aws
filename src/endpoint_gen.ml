@@ -6,7 +6,7 @@ let log s = Printf.eprintf (s ^^ "\n%!")
 let var_replace hostname svc_name region dns_suffix =
   let hostname = Str.replace_first (Str.regexp_string {|{region}|}) region hostname in
   let hostname = Str.replace_first (Str.regexp_string {|{service}|}) svc_name hostname in
-  "https://" ^ (Str.replace_first (Str.regexp_string {|{dnsSuffix}|}) dns_suffix hostname)
+  Str.replace_first (Str.regexp_string {|{dnsSuffix}|}) dns_suffix hostname
 
 let write_endpoint
   svc_name
@@ -39,6 +39,16 @@ let write_partition (p : Endpoints_t.partition) = Syntax.(
         (ident "None")))
 )
 
+let write_url_of = Syntax.(
+  let_ "url_of"
+    (fun2 "svc_name" "region"
+      (matchoption
+        (app2 "endpoint_of" (ident "svc_name") (ident "region"))
+        (app1 "Some" (app2 "^" (str "https://") (ident "var")))
+        (ident "None")
+      ))
+)
+
 let main input outdir =
   log "Start processing endpoints";
 
@@ -50,7 +60,7 @@ let main input outdir =
     |> List.find (fun p -> String.equal Endpoints_t.(p.partition) "aws") in
   let outfile = (outdir </> "endpoints.ml") in
   let syntax = write_partition aws in
-  Util.Printing.write_structure outfile [syntax];
+  Util.Printing.write_structure outfile [syntax; write_url_of];
   close_in inc;
 
 module CommandLine = struct
