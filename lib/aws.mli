@@ -330,3 +330,5 @@ module BaseTypes : sig
   module Float    : Base with type t = float
   module DateTime : Base with type t = CalendarLib.Calendar.t
 end
+
+module Endpoints = Endpoints

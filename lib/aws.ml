@@ -462,3 +462,5 @@ module Signing = struct
       let headers = ("x-amz-date",amzdate) :: ("Authorization", authorization_header) :: headers in
       (meth, uri, headers)
   end
+
+module Endpoints = Endpoints
