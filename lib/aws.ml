@@ -461,7 +461,7 @@ module Signing = struct
       let signing_key = get_signature_key secret_key datestamp region service in
       let signature = Hash.sha256_hex ~key:signing_key string_to_sign in
       let authorization_header = String.concat "" [algorithm; " "; "Credential="; access_key; "/"; credential_scope; ", "; "SignedHeaders="; signed_headers; ", "; "Signature="; signature] in
-      let headers = ("x-amz-date",amzdate) :: ("Authorization", authorization_header) :: headers in
+      let headers = ("x-amz-date", amzdate) :: ("x-amz-content-sha256", payload_hash) :: ("Authorization", authorization_header) :: headers in
       (meth, uri, headers)
   end
 
