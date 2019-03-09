@@ -907,8 +907,7 @@ module ChangeMessageVisibilityBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.of_option_exn
-                  (ChangeMessageVisibilityBatchRequestEntryList.parse xml)))
+               (ChangeMessageVisibilityBatchRequestEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -951,8 +950,7 @@ module SendMessageBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.of_option_exn
-                  (SendMessageBatchRequestEntryList.parse xml)))
+               (SendMessageBatchRequestEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -993,8 +991,7 @@ module DeleteMessageBatchRequest =
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
           entries =
             (Xml.required "Entries"
-               (Util.of_option_exn
-                  (DeleteMessageBatchRequestEntryList.parse xml)))
+               (DeleteMessageBatchRequestEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1032,11 +1029,9 @@ module ChangeMessageVisibilityBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.of_option_exn
-                  (ChangeMessageVisibilityBatchResultEntryList.parse xml)));
+               (ChangeMessageVisibilityBatchResultEntryList.parse xml));
           failed =
-            (Xml.required "Failed"
-               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
+            (Xml.required "Failed" (BatchResultErrorEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1113,11 +1108,9 @@ module SendMessageBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.of_option_exn
-                  (SendMessageBatchResultEntryList.parse xml)));
+               (SendMessageBatchResultEntryList.parse xml));
           failed =
-            (Xml.required "Failed"
-               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
+            (Xml.required "Failed" (BatchResultErrorEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1167,11 +1160,8 @@ module AddPermissionRequest =
             (Xml.required "Label"
                (Util.option_bind (Xml.member "Label" xml) String.parse));
           a_w_s_account_ids =
-            (Xml.required "AWSAccountIds"
-               (Util.of_option_exn (AWSAccountIdList.parse xml)));
-          actions =
-            (Xml.required "Actions"
-               (Util.of_option_exn (ActionNameList.parse xml)))
+            (Xml.required "AWSAccountIds" (AWSAccountIdList.parse xml));
+          actions = (Xml.required "Actions" (ActionNameList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1297,12 +1287,9 @@ module ReceiveMessageRequest =
           queue_url =
             (Xml.required "QueueUrl"
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
-          attribute_names =
-            (Util.of_option []
-               (Util.of_option_exn (AttributeNameList.parse xml)));
+          attribute_names = (Util.of_option [] (AttributeNameList.parse xml));
           message_attribute_names =
-            (Util.of_option []
-               (Util.of_option_exn (MessageAttributeNameList.parse xml)));
+            (Util.of_option [] (MessageAttributeNameList.parse xml));
           max_number_of_messages =
             (Util.option_bind (Xml.member "MaxNumberOfMessages" xml)
                Integer.parse);
@@ -1571,11 +1558,7 @@ module ListDeadLetterSourceQueuesResult =
     let make ~queue_urls  () = { queue_urls }
     let parse xml =
       Some
-        {
-          queue_urls =
-            (Xml.required "queueUrls"
-               (Util.of_option_exn (QueueUrlList.parse xml)))
-        }
+        { queue_urls = (Xml.required "queueUrls" (QueueUrlList.parse xml)) }
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -1698,11 +1681,7 @@ module ReceiveMessageResult =
       messages: MessageList.t }
     let make ?(messages= [])  () = { messages }
     let parse xml =
-      Some
-        {
-          messages =
-            (Util.of_option [] (Util.of_option_exn (MessageList.parse xml)))
-        }
+      Some { messages = (Util.of_option [] (MessageList.parse xml)) }
     let to_query v =
       Query.List
         (Util.list_filter_opt
@@ -1733,9 +1712,7 @@ module GetQueueAttributesRequest =
           queue_url =
             (Xml.required "QueueUrl"
                (Util.option_bind (Xml.member "QueueUrl" xml) String.parse));
-          attribute_names =
-            (Util.of_option []
-               (Util.of_option_exn (AttributeNameList.parse xml)))
+          attribute_names = (Util.of_option [] (AttributeNameList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1782,11 +1759,9 @@ module DeleteMessageBatchResult =
         {
           successful =
             (Xml.required "Successful"
-               (Util.of_option_exn
-                  (DeleteMessageBatchResultEntryList.parse xml)));
+               (DeleteMessageBatchResultEntryList.parse xml));
           failed =
-            (Xml.required "Failed"
-               (Util.of_option_exn (BatchResultErrorEntryList.parse xml)))
+            (Xml.required "Failed" (BatchResultErrorEntryList.parse xml))
         }
     let to_query v =
       Query.List
@@ -1831,11 +1806,7 @@ module ListQueuesResult =
       queue_urls: QueueUrlList.t }
     let make ?(queue_urls= [])  () = { queue_urls }
     let parse xml =
-      Some
-        {
-          queue_urls =
-            (Util.of_option [] (Util.of_option_exn (QueueUrlList.parse xml)))
-        }
+      Some { queue_urls = (Util.of_option [] (QueueUrlList.parse xml)) }
     let to_query v =
       Query.List
         (Util.list_filter_opt

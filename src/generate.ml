@@ -158,7 +158,6 @@ let types is_ec2 shapes =
             in
             let b = if is_flat_list ~shapes ~shp:mem.Structure.shape then
               Syntax.(
-                app1 "Util.of_option_exn"
                   (app1 (mem.Structure.shape ^ ".parse")
                     (ident "xml"))
               )
