@@ -61,9 +61,6 @@ module Util = struct
     | [] -> Some []
     | (Some v) :: xs -> option_bind (option_all xs) (fun rest -> Some (v :: rest))
     | None :: _ -> None
-  let str_starts_with prefix s =
-    let re = Str.regexp_case_fold ("^" ^ (prefix ^ ".*")) in
-    Str.string_partial_match re s 0
 end
 
 module Xml = struct
