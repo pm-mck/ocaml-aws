@@ -315,7 +315,7 @@ let op service version _shapes op =
     letin "uri"
       (app2 "Uri.add_query_params"
          (app1 "Uri.of_string"
-          (app1 "Aws.Util.of_option_exn" (app2 "Aws.Aws_endpoints.endpoint_of" (ident "service") (ident "region"))))
+          (app1 "Aws.Util.of_option_exn" (app2 "Aws_endpoints.endpoint_of" (ident "service") (ident "region"))))
          (match op.Operation.input_shape with
           | None -> defaults
           | Some input_shape ->

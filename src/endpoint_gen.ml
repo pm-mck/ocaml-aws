@@ -53,7 +53,7 @@ let main input outdir =
   let endpoints = Endpoints_j.endpoints_of_string endpoint_data in
   let aws = endpoints.partitions
     |> List.find (fun p -> String.equal Endpoints_t.(p.partition) "aws") in
-  let outfile = (outdir </> "Aws_endpoints.ml") in
+  let outfile = (outdir </> "aws_endpoints.ml") in
   let syntax = write_partition aws in
   Util.Printing.write_structure outfile [syntax];
   close_in inc;
